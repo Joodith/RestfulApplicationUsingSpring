@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.exceptions.UserServiceException;
 import com.example.modelRequest.UpdateUserDetailsRequestModel;
 import com.example.modelRequest.UserDetailsRequestModel;
 import com.example.modelResponse.UserRest;
@@ -30,11 +31,13 @@ public class UserController {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_VALUE
             })
-    public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
-        if (users.containsKey(userId))
-            return new ResponseEntity<UserRest>(users.get(userId), HttpStatus.OK);
+    public ResponseEntity<UserRest> getUser(@PathVariable String userId) throws Exception {
 
-        return new ResponseEntity<UserRest>(HttpStatus.NO_CONTENT);
+        if(users==null || !users.containsKey(userId))throw new UserServiceException("User not found!");
+
+        return new ResponseEntity<UserRest>(users.get(userId), HttpStatus.OK);
+
+
     }
 
     @PostMapping(path = "/",
