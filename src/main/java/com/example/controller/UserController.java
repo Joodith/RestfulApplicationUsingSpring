@@ -4,7 +4,9 @@ import com.example.exceptions.UserServiceException;
 import com.example.modelRequest.UpdateUserDetailsRequestModel;
 import com.example.modelRequest.UserDetailsRequestModel;
 import com.example.modelResponse.UserRest;
+import com.example.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,8 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
     Map<String, UserRest> users;
-
+    @Autowired
+    UserService userService;
     @GetMapping
     public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
                            @RequestParam(value = "limit", defaultValue = "10") int limit,
@@ -51,14 +54,7 @@ public class UserController {
             }
     )
     public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetailsRequestModel) {
-        UserRest userRest = new UserRest();
-        userRest.setEmail(userDetailsRequestModel.getEmail());
-        userRest.setFirstName(userDetailsRequestModel.getFirstName());
-        userRest.setLastName(userDetailsRequestModel.getLastName());
-        String userId = UUID.randomUUID().toString();
-        userRest.setUserId(userId);
-        if (users == null) users = new HashMap<>();
-        users.put(userId, userRest);
+        UserRest userRest=userService.createUser(userDetailsRequestModel);
         return new ResponseEntity<>(userRest, HttpStatus.CREATED);
     }
 
